@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>AIチャット</title>
+</head>
+<body>
+
+    <input type="text" id="user-input" placeholder="質問を入力">
+    <button onclick="sendMessage()">送信</button>
+    <p id="chat-result">ここにAIの返信が出ます</p>
+
+    <script>
+        // ★ここにGASのURLを貼り付けてください★
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwxv-6cykSgFFk31Q7VZ6VL8BG2MbVogn_nASXNKwnD2wojJmB5LKaSA50djtObezNU0A/exec";
+
+        async function sendMessage() {
+            const input = document.getElementById("user-input").value;
+            const resultDiv = document.getElementById("chat-result");
+            
+            resultDiv.innerText = "考え中...";
+
+            const response = await fetch(WEB_APP_URL + "?message=" + encodeURIComponent(input));
+            const data = await response.json();
+            resultDiv.innerText = data.reply;
+        }
+    </script>
+</body>
+</html>
