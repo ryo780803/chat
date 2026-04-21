@@ -2,28 +2,433 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>AIチャット</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hida Manu House | Private Vacation Rental in Takayama</title>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-green: #1a4d32;
+            --bg-color: #ffffff;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --soft-pink: #f8d7da;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Noto Sans JP', sans-serif; color: var(--text-color); line-height: 2; background-color: var(--bg-color); overflow-x: hidden; }
+        h1, h2, h3, .mincho { font-family: 'Shippori Mincho', serif; letter-spacing: 0.05em; font-weight: 400; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 5%; }
+
+        /* 言語切り替え */
+        .lang-en { display: none !important; }
+        body.is-en .lang-ja { display: none !important; }
+        body.is-en .lang-en { display: block !important; }
+        body.is-en span.lang-en { display: inline !important; }
+
+        /* --- Navigation --- */
+        nav { position: fixed; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.95); z-index: 2000; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .logo { font-family: 'Shippori Mincho', serif; font-weight: bold; font-size: 1.1rem; color: var(--primary-color); text-decoration: none; z-index: 2101; }
+        .nav-content { display: flex; align-items: center; gap: 40px; }
+        .nav-links { display: flex; list-style: none; gap: 30px; }
+        .nav-links a { text-decoration: none; color: var(--text-color); font-size: 0.8rem; letter-spacing: 0.1em; transition: 0.3s; }
+        .burger { display: none; cursor: pointer; z-index: 2101; }
+        .burger div { width: 25px; height: 1px; background-color: var(--text-color); margin: 6px; }
+        .lang-switch { display: flex; gap: 10px; border-left: 1px solid #eee; padding-left: 20px; }
+        .lang-btn { cursor: pointer; font-size: 0.75rem; border: none; background: none; color: #ccc; }
+        .lang-btn.active { color: var(--text-color); border-bottom: 2px solid var(--soft-pink); }
+
+        /* Header */
+        header { height: 100vh; background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url("images/1776693419785.jpg"); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
+        .hero-text h1 { font-size: clamp(1.4rem, 4vw, 2.5rem); margin-bottom: 10px; text-shadow: 0 2px 15px rgba(0,0,0,0.3); }
+
+        /* Section Global */
+        section { padding: 50px 0; }
+        .section-label { font-size: 0.65rem; letter-spacing: 0.4em; color: #bbb; display: block; margin-bottom: 15px; text-align: center; }
+        .section-title { text-align: center; margin-bottom: 80px; }
+        .section-title h2 { font-size: 1.5rem; border-bottom: 1px solid var(--soft-pink); display: inline-block; padding-bottom: 10px; }
+
+        /* Concept / Service */
+        .concept-text-box { max-width: 800px; margin: 0 auto; text-align: center; }
+        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .service-card { background: var(--card-bg); border: 1px solid #f0f0f0; padding: 40px 25px; border-top: 6px solid var(--soft-pink); }
+        .service-icon { margin-bottom: 20px; display: block; text-align: center; width: 100%; height: 20%;}
+        img {width: 20%;;}
+        .service-card h3 { font-size: 1rem; margin-bottom: 20px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .service-card p { font-size: 0.9rem; color: #666; text-align: justify; }
+
+        /* Reviews Section */
+        .reviews-wrapper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .review-card { background: #fff; padding: 40px 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); position: relative; border: 1px solid #f9f9f9; }
+        .review-card::before { content: "“"; position: absolute; top: 15px; left: 20px; font-size: 3rem; color: var(--soft-pink); font-family: serif; }
+        .review-card p { font-size: 0.85rem; color: #555; margin-bottom: 25px; line-height: 1.9; position: relative; z-index: 1; }
+        .review-author { font-size: 0.75rem; font-weight: bold; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
+        .review-author::before { content: ""; display: inline-block; width: 20px; height: 1px; background: var(--soft-pink); }
+
+        /* Access Section */
+        .access-section { background-color: var(--accent-green); color: white; padding: 120px 0; }
+        .access-card { background: white; color: var(--text-color); border-radius: 12px; display: flex; max-width: 1000px; margin: 0 auto; overflow: hidden; }
+        .access-info { flex: 1; padding: 50px; }
+        .access-map { flex: 1.2; min-height: 400px; }
+        .access-info h3 { font-size: 1.5rem; color: var(--accent-green); margin-bottom: 30px; }
+        .info-item { margin-bottom: 20px; }
+        .info-label { font-size: 0.7rem; color: #aaa; font-weight: bold; }
+
+        /* Host Section */
+        .host-section { background-color: #fafafa; }
+        .host-flex { display: flex; align-items: center; gap: 60px; flex-wrap: wrap; }
+        .host-image, .host-text { flex: 1; min-width: 300px; }
+        .host-image img { width: 100%; border-radius: 2px; }
+        .tag { display: inline-block; padding: 2px 12px; border: 1px solid var(--soft-pink); font-size: 0.7rem; margin: 10px 8px 0 0; color: #888; }
+        
+        /* Reservation */
+        .reserve-section { text-align: center; padding: 150px 0; }
+        .cta-btn { display: inline-block; padding: 20px 80px; background-color: var(--primary-color); color: white; text-decoration: none; font-size: 0.85rem; letter-spacing: 0.2em; margin-top: 40px; }
+        .booking-notice { font-size: 0.7rem; color: #999; margin-top: 15px; display: block; }
+
+        .left {text-align: left;}
+
+        /* 1ページ目用の追加スタイル */
+/* 親要素：中身を縦に並べて、横方向を中央寄せにする */
+/* 親要素 */
+.intro-amenities {
+    padding: 80px 5%;
+    background-color: #fcfaf7;
+    text-align: center; /* これで中の要素（pタグやボタン）が中央に寄る準備完了 */
+}
+
+/* ボタン */
+/* ボタンを包む箱をフレックスボックスにして中央寄せする */
+.btn-container {
+    display: flex;
+    justify-content: center; /* 横方向の中央寄せ */
+    margin-top: 10px;        /* 上のカードとの間隔 */
+    width: 100%;             /* 横幅いっぱいに */
+}
+
+/* ボタン自体の設定（幅を広げないために inline-block を維持） */
+.btn-detail-link {
+    display: inline-block;
+    padding: 18px 60px;
+    background-color: #2c3e50;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    /* margin: 0 auto; はあってもなくてもOKですが、containerに任せます */
+}
+
+.btn-detail-link:hover {
+        background-color: #1a4d32; /* ホバー時に緑に変化 */
+        transform: translateY(-3px); /* 少し浮き上がる */
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    .btn-detail-link::after {
+        content: '→'; /* 矢印をプラス */
+        margin-left: 10px;
+    }
+
+    /* デフォルト（日本語表示） */
+.btn-detail-link .lang-en { display: none; }
+.btn-detail-link .lang-ja { display: inline; }
+
+/* 英語モード（bodyに is-en が付いた時） */
+body.is-en .btn-detail-link .lang-ja { display: none; }
+body.is-en .btn-detail-link .lang-en { display: inline; }
+
+        /* --- Responsive --- */
+        @media (max-width: 1024px) {
+            .nav-links { position: fixed; top: 0; right: -100%; height: 100vh; width: 80%; background: white; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
+            .nav-links.active { right: 0; }
+            .burger { display: block; }
+            .service-grid { grid-template-columns: 1fr; }
+            
+            .reviews-wrapper { 
+                display: flex; 
+                overflow-x: auto; 
+                scroll-snap-type: x mandatory; 
+                gap: 20px; 
+                padding: 10px 30px 40px;
+                margin: 0; 
+                -webkit-overflow-scrolling: touch; 
+                scrollbar-width: none;
+            }
+            .reviews-wrapper::-webkit-scrollbar { display: none; }
+            .review-card { 
+                min-width: 100%; 
+                scroll-snap-align: center; 
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            }
+
+            .service-icon { margin-bottom: 20px; display: block; text-align: center; width: 100%; height: 16%;}
+        img {width: 10%;;}
+
+            .service-card h3 {font-size: 1.25rem;}
+
+
+            .access-info {padding: 45px 45px 15px 45px;}
+            .access-card { flex-direction: column; }
+            .access-map { min-height: 100%; }
+        }
+        @media (max-width: 768px) { 
+            .host-flex { flex-direction: column; text-align: center;} }
+            .left {text-align: left;}
+            .section-label2 {text-align: center; display: inline-block;}
+
+
+    </style>
 </head>
 <body>
 
-    <input type="text" id="user-input" placeholder="質問を入力">
-    <button onclick="sendMessage()">送信</button>
-    <p id="chat-result">ここにAIの返信が出ます</p>
+    <nav>
+        <a href="#" class="logo">Hida Manu House</a>
+        <div class="nav-content">
+            <ul class="nav-links">
+                <li><a href="#about" onclick="closeMenu()">CONCEPT</a></li>
+                <li><a href="#service" onclick="closeMenu()">SERVICE</a></li>
+                <li><a href="#reviews" onclick="closeMenu()">REVIEWS</a></li>
+                <li><a href="#host" onclick="closeMenu()">OWNER</a></li>
+                <li><a href="#access" onclick="closeMenu()">ACCESS</a></li>
+                <li><a href="#reserve" onclick="closeMenu()">RESERVE</a></li>
+            </ul>
+            <div class="lang-switch">
+                <button id="btn-ja" class="lang-btn active" onclick="setLang('ja')">JP</button>
+                <button id="btn-en" class="lang-btn" onclick="setLang('en')">EN</button>
+            </div>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+            <div></div><div></div><div></div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="hero-text">
+            <h1 class="lang-ja mincho">家のようにくつろぐ旅を、高山で。</h1>
+            <h1 class="lang-en mincho">Embrace the comfort of home in Hida Takayama.</h1>
+            <p class="lang-ja">Hida Manu House - 高山の宿</p>
+            <p class="lang-en">Hida Manu House - Your private sanctuary in the heart of the Alps.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <section id="about">
+            <span class="section-label">CONCEPT</span>
+            <div class="section-title">
+                <h2 class="lang-ja mincho">ただいまと言いたくなる、<br>心の拠点。</h2>
+                <h2 class="lang-en mincho">Your Serene Home Away from Home</h2>
+            </div>
+            <div class="concept-text-box">
+                <p class="left" class="lang-ja">Hida Manu Houseは、飛騨高山の地で「暮らすように旅をする」を叶えるゲストハウス型民泊です。<br>高山観光、白川郷、飛騨古川、奥飛騨温泉郷など、人気観光スポットへのアクセスも良く、観光→温泉→宿でののんびりという最高の流れを楽しめる立地が魅力です。清潔感あふれる室内、使い勝手の良いキッチン、および大切な人と囲むダイニング。我が家のような安心感をご堪能ください。</p>
+                <p class="lang-en">At Hida Manu House, we offer a "live-like-a-local" experience in beautiful Hida Takayama. Perfectly positioned for exploring the historic streets of Takayama, Shirakawa-go, and the rejuvenating Okuhida hot springs, our house is the ideal base for your adventures. With pristine modern interiors, a fully-equipped kitchen, and a cozy dining area, you can enjoy a private, tranquil stay with your loved ones just as you would in your own home.</p>
+            </div>
+        </section>
+
+        <section id="service">
+            <span class="section-label">SERVICE</span>
+            <div class="section-title">
+                <h2 class="lang-ja mincho">快適な滞在のための、<br>3つの約束。</h2>
+                <h2 class="lang-en mincho">Our Commitments to Your Comfort</h2>
+            </div>
+            <div class="service-grid">
+                <div class="service-card">
+                    <span class="service-icon"><img src="images/食事の無料アイコン13.png" alt=""></span>
+                    <h3 class="lang-ja mincho">キッチン＆ダイニング完備で<br>“家のように過ごせる宿”</h3>
+                    <h3 class="lang-en mincho">Full Kitchen &<br>Dining Space</h3>
+                    <p class="lang-ja">広めのキッチンとダイニングスペースを備えており、家族や友人同士で料理を楽しんだり、団らんの時間を過ごすことができます。観光の合間に、ちょっと一息。旅先とは思えない快適さを感じてください。</p>
+                    <p class="lang-en">Enjoy the freedom to cook and dine at your own pace. Our spacious kitchen and dining area are perfect for family gatherings or quiet mornings, offering a level of relaxation that hotels simply cannot match.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon"><img src="images/ほうきのアイコン1.png" alt=""></span>
+                    <h3 class="lang-ja mincho">毎日清掃で常に清潔<br>快適な空間をご提供</h3>
+                    <h3 class="lang-en mincho">Impeccable Cleanliness &<br>Daily Maintenance</h3>
+                    <p class="lang-ja">清潔さにこだわり、毎日丁寧に清掃を実施しています。小さなお子さま連れのご家族や長期滞在の方にも安心してお過ごしいただけるよう、整った設備と落ち着いたインテリアでお迎えいたします。</p>
+                    <p class="lang-en">We take immense pride in maintaining a spotless environment. Our daily professional cleaning ensures a safe and comfortable stay for families with children and long-term travelers alike.</p>
+                </div>
+                <div class="service-card">
+                    <span class="service-icon"><img src="images/地図＆マーカーアイコン2.png" alt=""></span>
+                    <h3 class="lang-ja mincho">高山・白川郷・奥飛騨温泉郷へ<br>行きやすい好立地</h3>
+                    <h3 class="lang-en mincho">Prime Location for<br>Regional Exploration</h3>
+                    <p class="lang-ja">高山市街散策や「古い町並み」、飛騨の里、飛騨古川、白川郷など、人気観光地へのアクセスが抜群。観光を楽しんだ後は、近くの温泉施設でゆったり身体を温め、当宿でリラックスしてお休みいただけます。</p>
+                    <p class="lang-en">Conveniently located for visiting the "Old Town," Shirakawa-go, and Hida-Furukawa. After a day of sightseeing, unwind at a nearby hot spring before returning to the quiet comfort of Hida Manu House.</p>
+                </div>
+    
+            </div>
+        </section>
+
+        <section id="service">
+            <div class="service-grid">
+               </div>
+               <div class="lang-menu">
+                <button id="btn-ja" onclick="setLang('ja')">JP</button>
+                <button id="btn-en" onclick="setLang('en')">EN</button>
+            </div>
+            
+            <div class="btn-container">
+                <a href="details.html" class="btn-detail-link">
+                    <span class="lang-ja">設備・アメニティ詳細を見る</span>
+                    <span class="lang-en">View Amenities Details</span>
+                </a>
+            </div>        
+        </section>
+
+
+        <section id="reviews">
+            <span class="section-label">REVIEWS</span>
+            <div class="section-title">
+                <h2 class="lang-ja mincho">ゲスト様からの温かい声。</h2>
+                <h2 class="lang-en mincho">Guest Experiences</h2>
+            </div>
+            <div class="reviews-wrapper">
+                <div class="review-card">
+                    <p class="lang-ja">「まるで自分の家のようにリラックスできました。キッチンも使いやすく、家族での夕食が最高に楽しかったです。清掃も行き届いていて本当に綺麗でした！」</p>
+                    <p class="lang-en">"We felt incredibly relaxed, just like being in our own home. The kitchen was so easy to use, and our family dinners were the highlight of our trip. Absolutely spotless!"</p>
+                </div>
+                <div class="review-card">
+                    <p class="lang-ja">「オーナーさんがとても親切で、地元の美味しい居酒屋を教えてくれました。観光地へのアクセスも良く、白川郷へ行くのにもとても便利な場所です。」</p>
+                    <p class="lang-en">"The host was so helpful and shared great local recommendations for Izakaya. The location is perfect for visiting Shirakawa-go and other sights."</p>
+                </div>
+                <div class="review-card">
+                    <p class="lang-ja">「とにかく清潔！ミニマルなインテリアが素敵で、落ち着いて過ごせました。近くの温泉施設も最高で、また高山に来る際はこちらに泊まりたいです。」</p>
+                    <p class="lang-en">"Unbeatable cleanliness. I loved the minimalist interior—it made for such a peaceful stay. I’ll definitely stay here again on my next visit to Takayama."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="host" class="host-section">
+            <div class="host-flex">
+                <div class="host-image"><img src="images/IMG_5617.jpg" alt="Owner Profile"></div>
+                <div class="host-text">
+                    <span class="section-label2" style="text-align: left; font-size: 0.65rem; letter-spacing: 0.4em; color: #bbb; margin-bottom: 15px;" >HOST STORY</span>
+                    <h3 class="lang-ja mincho" style="font-size:1.6rem; margin-bottom:25px;">飛騨を愛するプロが導く、<br>特別な滞在。</h3>
+                    <h3 class="lang-en mincho" style="font-size:1.6rem; margin-bottom:25px; ">Expert Hospitality with a<br>Local Heart</h3>
+                    <p class="left" class="lang-ja" style="font-size:0.9rem; color:#666;">旅館・ホテルで約8年、最高のおもてなしを追求してきました。「地元の人が通う店は？」「混雑を避けるコツは？」ガイドブックにはない“リアルな飛騨”を、プロの視点でご提案します。日本語、英語、ヒンディー語での対応が可能です。</p>
+                    <p class="lang-en" style="font-size:0.9rem; color:#666;">With 8 years of experience in the luxury hospitality industry, I am dedicated to making your stay exceptional. From hidden local gems to travel tips only a local would know, I am here to help you experience the "real" Hida. Fluent in Japanese, English, and Hindi.</p>
+                    <div class="language-tags"><span class="tag">日本語 OK</span><span class="tag">English OK</span><span class="tag">हिन्दी OK</span></div>
+                </div>
+            </div>
+        </section>
+    </div> 
+
+    <section id="access" class="access-section">
+        <div class="container">
+            <span class="section-label">ACCESS</span>
+            <div class="section-title">
+                <h2 class="lang-ja mincho">アクセス</h2>
+                <h2 class="lang-en mincho">Location & Access</h2>
+            </div>
+            <div class="access-card">
+                <div class="access-info">
+                    <h3 class="mincho">Hida Manu House</h3>
+                    <div class="info-item">
+                        <span class="info-label">Address</span>
+                        <p class="info-content lang-ja">〒506-0052 岐阜県高山市下岡本町961-7</p>
+                        <p class="info-content lang-en">961-7 Shimookamotomachi, Takayama, Gifu 506-0052, Japan</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Parking</span>
+                        <p class="info-content lang-ja">駐車場：2台（無料）</p>
+                        <p class="info-content lang-en">Parking: 2 Complimentary Spaces (No reservation required)</p>
+                    </div>
+                </div>
+                <div class="access-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d12887.537329369474!2d137.263071!3d36.1450295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x6002a50036639377%3A0x5601112172d244bd!2z6aOb6aio44Oe44OM44OP44Km44K544CB44CSNTA2LTAwNTIg5bKQ6Zic55yM6auY5bGx5biC5LiL5bKh5pys55S677yZ77yW77yR4oiS77yX!3m2!1d36.1530284!2d137.2459333!5e0!3m2!1sja!2sjp!4v1775533430687!5m2!1sja!2sjp" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <section id="reserve" class="reserve-section">
+            <span class="section-label">RESERVATION</span>
+            <h2 class="lang-ja mincho">ご予約はこちら</h2>
+            <h2 class="lang-en mincho">Book Your Stay</h2>
+            <a href="https://www.booking.com/hotel/jp/hida-manu-househidamanuhausu.ja.html?aid=356980&label=gog235jc-10CAsodUIcaGlkYS1tYW51LWhvdXNlaGlkYW1hbnVoYXVzdUgEWANodYgBAZgBM7gBGcgBDNgBA-gBAfgBAYgCAagCAbgC_PbRzgbAAgHSAiRmY2E1ZTMxOC0xY2ZhLTRhMmEtOTQwOS0xYjExM2U0YzA1YjfYAgHgAgE&sid=a88c0bcb16795d4ca08271be2b3a6e14&all_sr_blocks=1606334702_431569909_4_0_0&checkin=2026-04-16&checkout=2026-04-17&dest_id=-245205&dest_type=city&dist=0&group_adults=4&group_children=0&hapos=1&highlighted_blocks=1606334702_431569909_4_0_0&hpos=1&map=1&matching_block_id=1606334702_431569909_4_0_0&no_rooms=1&req_adults=4&req_children=0&room1=A%2CA%2CA%2CA&sb_price_type=total&sr_order=popularity&sr_pri_blocks=1606334702_431569909_4_0_0__5596364&srepoch=1775532934&srpvid=bc92193f1d14061b&type=total&ucfs=1&lang=ja&soz=1&lang_changed=1#availability" class="cta-btn">
+                <span class="lang-ja">空室確認 / ご予約</span>
+                <span class="lang-en">Check Availability</span>
+            </a>
+            <span class="booking-notice lang-ja">※外部サイト（Booking.com）へ移動します</span>
+            <span class="booking-notice lang-en">*You will be redirected to Booking.com</span>
+        </section>
+    </div> 
+
+    <footer style="text-align: center; padding: 60px 0; font-size: 0.7rem; color: #ccc; border-top: 1px solid #eee;">
+        <p>© 2026 Hida Manu House. All Rights Reserved.</p>
+    </footer>
 
     <script>
-        // ★ここにGASのURLを貼り付けてください★
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwxv-6cykSgFFk31Q7VZ6VL8BG2MbVogn_nASXNKwnD2wojJmB5LKaSA50djtObezNU0A/exec";
-
-        async function sendMessage() {
-            const input = document.getElementById("user-input").value;
-            const resultDiv = document.getElementById("chat-result");
-            
-            resultDiv.innerText = "考え中...";
-
-            const response = await fetch(WEB_APP_URL + "?message=" + encodeURIComponent(input));
-            const data = await response.json();
-            resultDiv.innerText = data.reply;
+        function setLang(lang) {
+            const body = document.body;
+            const btnJa = document.getElementById('btn-ja');
+            const btnEn = document.getElementById('btn-en');
+            if(lang === 'en') {
+                body.classList.add('is-en');
+                btnEn.classList.add('active');
+                btnJa.classList.remove('active');
+            } else {
+                body.classList.remove('is-en');
+                btnJa.classList.add('active');
+                btnEn.classList.remove('active');
+            }
         }
-    </script>
+
+        // メニューの開閉
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        }
+
+        // リンクをタップした時にメニューを閉じる
+        function closeMenu() {
+            const nav = document.querySelector('.nav-links');
+            if(nav.classList.contains('active')) {
+                nav.classList.remove('active');
+            }
+        }
+
+        function setLang(lang) {
+    const body = document.body;
+    const btnJa = document.getElementById('btn-ja');
+    const btnEn = document.getElementById('btn-en');
+    
+    // 追加：ボタンのリンク先を切り替える処理
+    const amenityLink = document.getElementById('amenity-link');
+
+    if(lang === 'en') {
+        body.classList.add('is-en');
+        btnEn.classList.add('active');
+        btnJa.classList.remove('active');
+        amenityLink.href = "details.html"; // 英語ページのパス
+    } else {
+        body.classList.remove('is-en');
+        btnJa.classList.add('active');
+        btnEn.classList.remove('active');
+        amenityLink.href = "details.html";    // 日本語ページのパス
+    }
+}
+function setLang(lang) {
+    const body = document.body;
+    const btnJa = document.getElementById('btn-ja');
+    const btnEn = document.getElementById('btn-en');
+    
+    if (lang === 'en') {
+        body.classList.add('is-en');
+        localStorage.setItem('lang', 'en'); // 言語を記憶
+        if(btnEn) btnEn.classList.add('active');
+        if(btnJa) btnJa.classList.remove('active');
+    } else {
+        body.classList.remove('is-en');
+        localStorage.setItem('lang', 'ja'); // 言語を記憶
+        if(btnJa) btnJa.classList.add('active');
+        if(btnEn) btnEn.classList.remove('active');
+    }
+}
+
+// ページ読み込み時に記憶した言語を適用
+window.onload = function() {
+    const savedLang = localStorage.getItem('lang') || 'ja';
+    setLang(savedLang);
+};
+   
+</script>
 </body>
 </html>
